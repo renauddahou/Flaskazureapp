@@ -24,8 +24,7 @@ steps:
       sudo docker build -t flasapp .
       
       echo  Test container 
-      sudo docker run -it --rm -p 8000:8000 flasapp bash -c "python3 app.py & sleep 2 && curl -X P
-      OST -d 'name=Renaud' http://localhost:5000/hello"
+      sudo docker run -it --rm -p 8000:8000 flasapp bash -c "python3 app.py & sleep 2 && curl -X POST -d 'name=Renaud' http://localhost:5000/hello"
     workingDirectory: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
