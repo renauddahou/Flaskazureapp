@@ -1,5 +1,6 @@
 import os
-from flask import Flask, redirect, render_template, request, send_from_directory, url_for
+from flask import Flask, redirect, render_template, request, \
+    send_from_directory, url_for
 
 app = Flask(__name__)
 
@@ -25,9 +26,8 @@ def hello():
         print('Request for hello page received with name=%s' % name)
         return render_template('hello.html', name=name)
     else:
-        print(
-            'Request for the hello page has been received with no name or a blank name. Redirecting...'
-        )
+        print('Request for the hello page received with\
+              no name or a blank name. Redirecting...')
         return redirect(url_for('index'))
 
 
