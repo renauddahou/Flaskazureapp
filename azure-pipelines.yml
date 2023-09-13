@@ -8,6 +8,7 @@ trigger:
 
 pool:
   name: Default
+
 steps:
 - task: CopyFiles@2
   inputs:
@@ -21,18 +22,7 @@ steps:
     script: |
       echo Test code quality
       python3 flake8.py
-  continueOnError: true # Continue to the next step even if this step fails
-
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |
-      $exitCode = $LASTEXITCODE
-          if ($exitCode -ne 0) {
-              Write-Host "Error: Code quality check failed with exit code $exitCode"
-              Write-Host "Failing the build pipeline..."
-              exit $exitCode
-          }
+  continueOnError: false # Stop the pipeline if this step fails
 
 - task: CmdLine@2
   displayName: 'Build Docker images'
@@ -55,5 +45,3 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
-
-
