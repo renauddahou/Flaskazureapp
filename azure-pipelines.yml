@@ -16,14 +16,37 @@ steps:
     OverWrite: true
 
 - task: CmdLine@2
+  displayName: 'Test code quality'
   inputs:
     script: |
       echo Test code quality
       python3 flake8.py
+  continueOnError: true # Continue to the next step even if this step fails
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      $exitCode = $LASTEXITCODE
+          if ($exitCode -ne 0) {
+              Write-Host "Error: Code quality check failed with exit code $exitCode"
+              Write-Host "Failing the build pipeline..."
+              exit $exitCode
+          }
+
+- task: CmdLine@2
+  displayName: 'Build Docker images'
+  inputs:
+    script: |
       echo Build Docker images
       sudo docker build -t flasapp .
-      
-      echo  Test container 
+    workingDirectory: '$(Build.ArtifactStagingDirectory)'
+
+- task: CmdLine@2
+  displayName: 'Test container'
+  inputs:
+    script: |
+      echo Test container
       sudo docker run --rm -p 8000:8000 flasapp bash -c "python3 app.py & sleep 2 && curl -X POST -d 'name=Renaud' http://localhost:5000/hello"
     workingDirectory: '$(Build.ArtifactStagingDirectory)'
 
