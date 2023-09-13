@@ -15,7 +15,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY app.py flake8.py flasktest.sh requirements.txt /app/
+COPY app.py flake8.py requirements.txt /app/
 ADD templates /app/templates
 ADD static /app/static
 
