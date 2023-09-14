@@ -45,12 +45,9 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: |
-      - script: |
-          # Naviguer vers le répertoire source
-          cd $(Build.ArtifactStagingDirectory) && zip -r app.zip ./ && pwd*
+    script: 'zip -r app.zip ./*'
+    workingDirectory: '$(Build.ArtifactStagingDirectory)'
           
-
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
