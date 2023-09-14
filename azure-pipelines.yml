@@ -52,8 +52,6 @@ steps:
       
           # Utiliser la commande zip pour créer l'archive
           zip -r app.zip ./*
-      
-        displayName: 'Create ZIP Archive'
 
 - task: PublishBuildArtifacts@1
   inputs:
