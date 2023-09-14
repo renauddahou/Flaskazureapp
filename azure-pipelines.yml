@@ -50,6 +50,8 @@ jobs:
   variables:
     archiveName: 'app.zip'
   steps:
+  - script: 'ls -lR $(Build.ArtifactStagingDirectory)' # Affiche le contenu du répertoire de travail
+    displayName: 'List Files'
   - task: CmdLine@2
     displayName: 'Archive Files'
     inputs:
