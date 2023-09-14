@@ -53,7 +53,8 @@ jobs:
   - task: CmdLine@2
     displayName: 'Archive Files'
     inputs:
-      script: 'zip -r $(archiveName) ./*'
+      script: |
+        zip -r $(archiveName) ./*
       workingDirectory: '$(Build.ArtifactStagingDirectory)'
             
   - task: PublishBuildArtifacts@1
