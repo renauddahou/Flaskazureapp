@@ -46,6 +46,7 @@ jobs:
 
 - job: Publish
   displayName: 'Publish Job'
+  dependsOn: TestBuild
   steps:
   - task: CmdLine@2
     displayName: 'Achives file'
@@ -63,6 +64,7 @@ jobs:
 
 - job: Deploy
   displayName: 'Deploy Job'
+  dependsOn: Publish
   steps:
   - task: CmdLine@2
     displayName: 'Run as Appservice'
