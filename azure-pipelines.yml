@@ -56,7 +56,7 @@ jobs:
     displayName: 'Archive Files'
     inputs:
       script: |
-        zip -r $(archiveName) .
+        zip -r $(archiveName) ./*
       workingDirectory: '$(Build.ArtifactStagingDirectory)'
             
   - task: PublishBuildArtifacts@1
