@@ -54,8 +54,6 @@ steps:
     publishLocation: 'Container'
   continueOnError: false
 
-
-
 - task: CmdLine@2
   displayName: 'Run as Appservice'
   inputs:
