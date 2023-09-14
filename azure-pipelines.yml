@@ -46,9 +46,11 @@ steps:
   inputs:
     rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
     includeRootFolder: true
-    archiveType: 'zip'
+    archiveType: 'custom'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
+
+
 
 - task: PublishBuildArtifacts@1
   inputs:
