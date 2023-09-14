@@ -49,6 +49,7 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
     replaceExistingArchive: true
+    excludeFiles: '$(Build.ArtifactStagingDirectory)/azure-pipelines.yml $(Build.ArtifactStagingDirectory)/Dockerfile $(Build.ArtifactStagingDirectory)/flake8.py'
 
 - task: PublishBuildArtifacts@1
   inputs:
@@ -56,3 +57,9 @@ steps:
     ArtifactName: 'drop'
     publishLocation: 'Container'
   continueOnError: false
+
+- task: CmdLine@2
+  inputs:
+    script: 'az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path /home/renaud/myagent/_work/1/a/app.zip'
+
+
