@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  name: Default
+  name: soatpool
 
 steps:
 - task: CopyFiles@2
