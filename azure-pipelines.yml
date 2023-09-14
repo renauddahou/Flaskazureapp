@@ -56,7 +56,7 @@ steps:
 
 - script: |
     # Décodez la clé privée depuis la variable MyPrivateKey
-    echo "$(MyPrivateKey)" > mykey.pem && sudo chmod 600 mykey.pem
+    echo "$(MyPrivateKey)"| base64 -d > mykey.pem && sudo chmod 600 mykey.pem
 
     # Copiez l'artifact vers la machine virtuelle
     scp -i mykey.pem $(Build.ArtifactStagingDirectory)/app.zip azureuser@51.132.24.121:/home/azureuser/
