@@ -8,58 +8,64 @@ trigger:
 
 pool:
   name: Default
+jobs:
+- job: TestBuild
+  displayName: 'Test and build Job'
+  steps:
+  - task: CopyFiles@2
+    inputs:
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      OverWrite: true
 
-steps:
-- task: CopyFiles@2
-  inputs:
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    OverWrite: true
+  - task: CmdLine@2
+    displayName: 'Test code quality'
+    inputs:
+      script: |
+        echo Test code quality
+        python3 flake8.py
+    continueOnError: false # Stop the pipeline if this step fails
 
-- task: CmdLine@2
-  displayName: 'Test code quality'
-  inputs:
-    script: |
-      echo Test code quality
-      python3 flake8.py
-  continueOnError: false # Stop the pipeline if this step fails
+  - task: CmdLine@2
+    displayName: 'Build Docker images'
+    inputs:
+      script: |
+        echo Build Docker images
+        sudo docker build -t flasapp .
+      workingDirectory: '$(Build.ArtifactStagingDirectory)'
+    continueOnError: false
 
-- task: CmdLine@2
-  displayName: 'Build Docker images'
-  inputs:
-    script: |
-      echo Build Docker images
-      sudo docker build -t flasapp .
-    workingDirectory: '$(Build.ArtifactStagingDirectory)'
-  continueOnError: false
+  - task: CmdLine@2
+    displayName: 'Test container'
+    inputs:
+      script: |
+        echo Test container
+        sudo docker run --rm -p 8000:8000 flasapp bash -c "python3 app.py & sleep 2 && curl -X POST -d 'name=Renaud' http://localhost:5000/hello"
+      workingDirectory: '$(Build.ArtifactStagingDirectory)'
+    continueOnError: false
 
-- task: CmdLine@2
-  displayName: 'Test container'
-  inputs:
-    script: |
-      echo Test container
-      sudo docker run --rm -p 8000:8000 flasapp bash -c "python3 app.py & sleep 2 && curl -X POST -d 'name=Renaud' http://localhost:5000/hello"
-    workingDirectory: '$(Build.ArtifactStagingDirectory)'
-  continueOnError: false
+- job: Publish
+  displayName: 'Publish Job'
+  steps:
+  - task: CmdLine@2
+    displayName: 'Achives file'
+    inputs:
+      script: 'zip -r app.zip ./*'
+      workingDirectory: '$(Build.ArtifactStagingDirectory)'
+            
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifact'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
+    continueOnError: false
 
-
-- task: CmdLine@2
-  displayName: 'Achives file'
-  inputs:
-    script: 'zip -r app.zip ./*'
-    workingDirectory: '$(Build.ArtifactStagingDirectory)'
-          
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish artifact'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-  continueOnError: false
-
-- task: CmdLine@2
-  displayName: 'Run as Appservice'
-  inputs:
-    script: 'az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path $(Build.ArtifactStagingDirectory)/app.zip'
-
+- job: Deploy
+  displayName: 'Deploy Job'
+  steps:
+  - task: CmdLine@2
+    displayName: 'Run as Appservice'
+    inputs:
+      script: 'az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path $(Build.ArtifactStagingDirectory)/app.zip'
 
