@@ -48,10 +48,8 @@ steps:
     script: |
       - script: |
           # Naviguer vers le répertoire source
-          cd $(Build.ArtifactStagingDirectory)
-      
-          # Utiliser la commande zip pour créer l'archive
-          zip -r app.zip ./*
+          cd $(Build.ArtifactStagingDirectory) && zip -r app.zip ./*
+          
 
 - task: PublishBuildArtifacts@1
   inputs:
