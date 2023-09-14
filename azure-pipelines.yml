@@ -52,6 +52,11 @@ steps:
     ArtifactName: 'drop'
     publishLocation: 'Container'
   continueOnError: false
+- task: DeployRelease@1
+  displayName: 'Déployer vers Production VM'
+  inputs:
+    environmentName: 'vm' # Nom de l'environnement que vous avez créé
+    conditions: succeeded()
 - task: CmdLine@2
   displayName: 'Run as Appservice'
   inputs:
