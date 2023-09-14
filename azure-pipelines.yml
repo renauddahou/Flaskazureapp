@@ -47,11 +47,13 @@ jobs:
 - job: Publish
   displayName: 'Publish Job'
   dependsOn: TestBuild
+  variables:
+    archiveName: 'app.zip'
   steps:
   - task: CmdLine@2
-    displayName: 'Achives file'
+    displayName: 'Archive Files'
     inputs:
-      script: 'zip -r app.zip ./*'
+      script: 'zip -r $(archiveName) ./*'
       workingDirectory: '$(Build.ArtifactStagingDirectory)'
             
   - task: PublishBuildArtifacts@1
