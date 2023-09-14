@@ -59,7 +59,7 @@ steps:
     scp -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem $(Build.ArtifactStagingDirectory)/app.zip azureuser@51.132.24.121:/home/azureuser/
 
     # Connectez-vous à la machine virtuelle et déployez l'artifact
-    ssh -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem azureuser@51.132.24.121 "cd /home/azureuser && unzip app.zip"
+    ssh -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem azureuser@51.132.24.121 "cd /home/azureuser && unzip app.zip && rm -rf app.zip"
   displayName: 'Copy artifact to VM and deploy'
 
 - task: CmdLine@2
