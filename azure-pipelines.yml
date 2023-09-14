@@ -48,7 +48,7 @@ steps:
     script: |
       - script: |
           # Naviguer vers le répertoire source
-          cd $(Build.ArtifactStagingDirectory) && zip -r app.zip ./*
+          cd $(Build.ArtifactStagingDirectory) && zip -r app.zip ./ && pwd*
           
 
 - task: PublishBuildArtifacts@1
