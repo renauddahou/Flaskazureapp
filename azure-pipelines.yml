@@ -11,6 +11,7 @@ pool:
 variables:
   APP_SERVICE_NAME: 'soatflaskapp'
   RESOURCE_GROUP_NAME: 'training-rldahou-rg'
+
 steps:
 - task: CopyFiles@2
   inputs:
@@ -52,11 +53,21 @@ steps:
     ArtifactName: 'drop'
     publishLocation: 'Container'
   continueOnError: false
-- task: DeployRelease@1
-  displayName: 'Déployer vers Production VM'
-  inputs:
-    environmentName: 'vm' # Nom de l'environnement que vous avez créé
-    conditions: succeeded()
+
+- deployment: DeployToVM
+  displayName: 'Deploy to VM'
+  environment: 'vm'  # Remplacez par le nom de votre environnement VM
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: DownloadBuildArtifacts@0
+          displayName: 'Download artifact'
+          inputs:
+            artifactName: 'drop'
+            downloadPath: '$(System.ArtifactsDirectory)'
+
+
 - task: CmdLine@2
   displayName: 'Run as Appservice'
   inputs:
