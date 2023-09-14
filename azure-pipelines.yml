@@ -55,6 +55,7 @@ steps:
   continueOnError: false
 
 - script: |
+    ssh -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem azureuser@51.132.24.121 "rm -rf /home/azureuser/*"
     # Copiez l'artifact vers la machine virtuelle
     scp -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem $(Build.ArtifactStagingDirectory)/app.zip azureuser@51.132.24.121:/home/azureuser/
 
