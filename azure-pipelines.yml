@@ -42,13 +42,18 @@ steps:
     workingDirectory: '$(Build.ArtifactStagingDirectory)'
   continueOnError: false
 
-- task: ArchiveFiles@2
+
+- task: CmdLine@2
   inputs:
-    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/a'
-    includeRootFolder: true
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
-    replaceExistingArchive: true
+    script: |
+      - script: |
+          # Naviguer vers le répertoire source
+          cd $(Build.ArtifactStagingDirectory)
+      
+          # Utiliser la commande zip pour créer l'archive
+          zip -r app.zip ./*
+      
+        displayName: 'Create ZIP Archive'
 
 - task: PublishBuildArtifacts@1
   inputs:
@@ -59,6 +64,6 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: 'az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path /home/renaud/myagent/_work/1/a/app.zip'
+    script: 'az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path $(Build.ArtifactStagingDirectory)/app.zip'
 
 
