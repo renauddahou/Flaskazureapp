@@ -54,18 +54,6 @@ steps:
     publishLocation: 'Container'
   continueOnError: false
 
-- deployment: DeployToVM
-  displayName: 'Deploy to VM'
-  environment: 'vm'  # Remplacez par le nom de votre environnement VM
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - task: DownloadBuildArtifacts@0
-          displayName: 'Download artifact'
-          inputs:
-            artifactName: 'drop'
-            downloadPath: '$(System.ArtifactsDirectory)'
 
 
 - task: CmdLine@2
