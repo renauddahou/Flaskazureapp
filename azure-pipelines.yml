@@ -55,14 +55,11 @@ steps:
   continueOnError: false
 
 - script: |
-    # Décodez la clé privée depuis la variable MyPrivateKey
-    echo "$(MyPrivateKey)"| base64 -d > mykey.pem && sudo chmod 600 mykey.pem
-
     # Copiez l'artifact vers la machine virtuelle
-    scp -i mykey.pem $(Build.ArtifactStagingDirectory)/app.zip azureuser@51.132.24.121:/home/azureuser/
+    scp -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem $(Build.ArtifactStagingDirectory)/app.zip azureuser@51.132.24.121:/home/azureuser/
 
     # Connectez-vous à la machine virtuelle et déployez l'artifact
-    ssh -i mykey.pem azureuser@51.132.24.121 "cd /home/azureuser && unzip app.zip"
+    ssh -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem azureuser@51.132.24.121 "cd /home/azureuser && unzip app.zip"
   displayName: 'Copy artifact to VM and deploy'
 
 - task: CmdLine@2
