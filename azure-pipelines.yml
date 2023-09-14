@@ -44,11 +44,13 @@ steps:
 
 
 - task: CmdLine@2
+  displayName: 'Achives file'
   inputs:
     script: 'zip -r app.zip ./*'
     workingDirectory: '$(Build.ArtifactStagingDirectory)'
           
 - task: PublishBuildArtifacts@1
+  displayName: 'Publish artifact'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
     ArtifactName: 'drop'
@@ -56,6 +58,7 @@ steps:
   continueOnError: false
 
 - task: CmdLine@2
+  displayName: 'Run as Appservice'
   inputs:
     script: 'az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path $(Build.ArtifactStagingDirectory)/app.zip'
 
