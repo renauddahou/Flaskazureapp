@@ -8,7 +8,9 @@ trigger:
 
 pool:
   name: Default
-
+variables:
+  APP_SERVICE_NAME: 'soatflaskapp'
+  RESOURCE_GROUP_NAME: 'training-rldahou-rg'
 steps:
 - task: CopyFiles@2
   inputs:
