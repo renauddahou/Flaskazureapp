@@ -1,18 +1,71 @@
-trigger:
-  branches:
-    exclude:
-      - '*'
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
 
-pr:
-  branches:
-    include:
-      - '*'
+trigger:
+- master
+variables:
+- name: APP_SERVICE_NAME
+  value: 'soatflaskapp'
+- name: RESOURCE_GROUP_NAME
+  value: 'training-rldahou-rg'
 
 pool:
-  vmImage: 'windows-latest'
-
+  name: Default
 steps:
-  - script: echo Hello, world!
-  - script: echo This is a build step.
+- task: CopyFiles@2
+  inputs:
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    OverWrite: true
+- task: CmdLine@2
+  displayName: 'Test code quality'
+  inputs:
+    script: |
+      echo Test code quality
+      python3 flake8.py
+  continueOnError: false
+- task: CmdLine@2
+  displayName: 'Build Docker images'
+  inputs:
+    script: |
+      echo Build Docker images
+      sudo docker build -t flasapp .
+    workingDirectory: '$(Build.ArtifactStagingDirectory)'
+  continueOnError: false
+- task: CmdLine@2
+  displayName: 'Test container'
+  inputs:
+    script: |
+      echo Test container
+      sudo docker run --rm -p 8000:8000 flasapp bash -c "python3 app.py & sleep 2 && curl -X POST -d 'name=Renaud' http://localhost:5000/hello"
+    workingDirectory: '$(Build.ArtifactStagingDirectory)'
+  continueOnError: false
+- task: CmdLine@2
+  displayName: 'Achives file'
+  inputs:
+    script: 'zip -r app.zip ./*'
+    workingDirectory: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+  continueOnError: false
+- task: CmdLine@2
+  displayName: 'Copy artifact to VM and deploy'
+  inputs:
+    script: |
+      ssh -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem azureuser@51.132.24.121 "rm -rf /home/azureuser/*"
+      # Copiez l'artifact vers la machine virtuelle
+      scp -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem $(Build.ArtifactStagingDirectory)/app.zip azureuser@51.132.24.121:/home/azureuser/
 
-# Ajoutez les étapes pour votre processus de release ici
+      # Connectez-vous à la machine virtuelle et déployez l'artifact
+      ssh -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem azureuser@51.132.24.121 "cd /home/azureuser && unzip app.zip && rm -rf app.zip"
+- task: CmdLine@2
+  displayName: 'Run as Appservice'
+  inputs:
+    script: 'az webapp deploy --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP_NAME --src-path $(Build.ArtifactStagingDirectory)/app.zip'
+
