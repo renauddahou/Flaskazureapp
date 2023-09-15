@@ -50,20 +50,10 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifact'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
   continueOnError: false
-- task: CmdLine@2
-  displayName: 'Copy artifact to VM and deploy'
-  inputs:
-    script: |
-      ssh -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem azureuser@51.132.24.121 "rm -rf /home/azureuser/*"
-      # Copiez l'artifact vers la machine virtuelle
-      scp -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem $(Build.ArtifactStagingDirectory)/app.zip azureuser@51.132.24.121:/home/azureuser/
-
-      # Connectez-vous à la machine virtuelle et déployez l'artifact
-      ssh -i /mnt/c/Users/'ASUS STRIX'/downloads/mykey.pem azureuser@51.132.24.121 "cd /home/azureuser && unzip app.zip && rm -rf app.zip"
 - task: CmdLine@2
   displayName: 'Run as Appservice'
   inputs:
